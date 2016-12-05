@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  This is the project for Ezzat's CS157A Project
  */
 package bookapp;
 
@@ -10,7 +8,8 @@ import java.util.Scanner;
 
 /**
  *
- * @author fredericmurry
+ * @author Frederic Murry
+ * 
  */
 public class BookApp {
 
@@ -21,12 +20,12 @@ public class BookApp {
     private String databaseName = "booksdb";
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
     private static final String DB_URL = "jdbc:mysql://localhost";
-    private static String CREATE_DATABASE = "CREATE DATABASE IF NOT EXISTS ";
-    private static String DATABASE_EXISTS = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ";
-    private static String DROP_DATABASE = "DROP DATABASE booksdb";
+    private static final String CREATE_DATABASE = "CREATE DATABASE IF NOT EXISTS ";
+    private static final String DATABASE_EXISTS = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ";
+    private static final String DROP_DATABASE = "DROP DATABASE booksdb";
     
     
-    public void initializeDB(){
+    public void initializeDB(Scanner input){
         
         try{
             
@@ -122,50 +121,181 @@ public class BookApp {
         }
     }
     
-    public void createAuthor(){
+    public void seedDatabase() {
+        
+    }
+    
+    /**
+     * Allows user to view, and update author table
+     * @param input 
+     */
+    public void manageAuthor(Scanner input){
         try{
-            userName = "root";
-            password = "";
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
-            System.out.println("Enter Author's First Name");
-            String firstName = in.nextLine();
-            System.out.println("Enter author's Last Name");
-            String lastName = in.nextLine();
-            Statement s = connection.createStatement();
-            boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
-            if(success){
-                String insertQuery = "INSERT INTO authors (firstName, lastName) "
-                    + "VALUES ('"
-                    + firstName
-                    + "', '"
-                    +lastName
-                    + "'); ";
-                System.out.println(insertQuery);
-                s.executeUpdate(insertQuery);
-                System.out.println("Entry Created\n\n\n");
-            }
-            else{
-                this.initializeDB();
-                this.createAuthor();
+            System.out.println("Manage Author:\nPlease choose an option");
+            System.err.println("1. Show Authors");
+            System.out.println("2. Add new author");
+            System.out.println("3.Update Author");
+            System.out.println("4.Main Menu");
+            int choice = Integer.parseInt(input.nextLine());
+            
+            switch (choice) {
+                case 1:
+                    String selectQuery = "SELECT * FROM authors";
+                    Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery(selectQuery);
+                    if(!rs.next()){
+                        System.out.println("No Results");
+                    }
+                    else{
+                        rs.beforeFirst();
+                        while(rs.next()){
+                            int id = rs.getInt("authorID");
+                            String firstName = rs.getString("firstName");
+                            String lastName = rs.getString("lastName");
+                            System.out.print("ID: "+id+"\t");
+                            System.out.print("First Name: "+firstName+"\t");
+                            System.out.println("Last Name: "+lastName);
+                        }
+                    }
+                    System.out.println("\n");
+                    break;
+                case 2:
+                    System.out.println("Enter Author's First Name");
+                    String firstName = in.nextLine();
+                    System.out.println("Enter author's Last Name");
+                    String lastName = in.nextLine();
+                    Statement s = connection.createStatement();
+                    boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
+                    if(success){
+                        String insertQuery = "INSERT INTO authors (firstName, lastName) "
+                                + "VALUES ('"
+                                + firstName
+                                + "', '"
+                                +lastName
+                                + "'); ";
+                        System.out.println(insertQuery);
+                        s.executeUpdate(insertQuery);
+                        System.out.println("Entry Created\n\n\n");
+                    }
+                    else{
+                        this.initializeDB(in);
+                        this.manageAuthor(in);
+                    }   break;
+                case 3:
+                    //Update Author
+                    
+                    break;
+            //Do Nothing and Exit
+                default:
+                    break;
             }
             
-        }catch(SQLException | ClassNotFoundException ex){
+        }catch(SQLException ex){
             if(ex.getMessage().equals("Unknown database 'booksdb'")){
                 System.out.println("Database Does not exist, Initializng it now.......");
-                this.initializeDB();
-                this.createAuthor();
+                this.initializeDB(input);
+                this.manageAuthor(input);
             }
             else{
                 System.err.println(ex.getMessage());
             }
+        }catch(NumberFormatException ex){
+            System.err.println("Not a valid option......\n\n\n");
+            this.manageAuthor(input);
+        }catch(ClassNotFoundException ex){
+            System.err.println("Application not installed correctly, please refer to documentation");
         }
     }
-    public void manual(){
-        
+    
+    
+    /**
+     * Allows user to view, and update publisher table
+     * @param input 
+     */
+    public void managePublisher(Scanner input){
+        try{
+            Scanner in = new Scanner(System.in);
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
+            System.out.println("Manage Publishers:\nPlease choose an option");
+            System.err.println("1. Show Publishers");
+            System.out.println("2. Add new Publisher");
+            System.out.println("3.Update Publisher");
+            System.out.println("4.Main Menu");
+            int choice = Integer.parseInt(input.nextLine());
+            
+            switch (choice) {
+                case 1:
+                    String selectQuery = "SELECT * FROM publishers";
+                    Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery(selectQuery);
+                    if(!rs.next()){
+                        System.out.println("No Results");
+                    }
+                    else{
+                        rs.beforeFirst();
+                        while(rs.next()){
+                        
+                            int id = rs.getInt("publisherID");
+                            String name = rs.getString("publisherName");
+                            System.out.print("ID: "+id+"\t");
+                            System.out.println("Name: "+name);
+                        }
+                    }
+                    System.out.println("\n");
+                    break;
+                case 2:
+                    System.out.println("Enter Name of Publisher");
+                    String name = in.nextLine();
+                    Statement s = connection.createStatement();
+                    boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
+                    if(success){
+                        String insertQuery = "INSERT INTO publishers (publisherName) "
+                                + "VALUES ('"
+                                + name
+                                + "'); ";
+                        System.out.println(insertQuery);
+                        s.executeUpdate(insertQuery);
+                        System.out.println("Entry Created\n\n\n");
+                    }
+                    else{
+                        this.initializeDB(in);
+                        this.manageAuthor(in);
+                    }   break;
+                case 3:
+                    //Update Author
+                    
+                    break;
+            //Do Nothing and Exit
+                default:
+                    break;
+            }
+            
+        }catch(SQLException ex){
+            if(ex.getMessage().equals("Unknown database 'booksdb'")){
+                System.out.println("Database Does not exist, Initializng it now.......");
+                this.initializeDB(input);
+                this.manageAuthor(input);
+            }
+            else{
+                System.err.println(ex.getMessage());
+            }
+        }catch(NumberFormatException ex){
+            System.err.println("Not a valid option......\n\n\n");
+            this.manageAuthor(input);
+        }catch(ClassNotFoundException ex){
+            System.err.println("Application not installed correctly, please refer to documentation");
+        }
     }
     
+    
+    /**
+     * Allows user of app to change username and password, and database name
+     * @param input The scanner that already exists
+     */
     public void Settings(Scanner input){
         System.out.println("Please choose an option:");
         System.out.println("1. Change username and password");
@@ -182,7 +312,8 @@ public class BookApp {
                  System.out.println("This application will now use the new username and password");
                  break;
             case 2:
-                
+                System.out.println("Enter new database name");
+                databaseName = input.nextLine();
                 break;
             default:
                 System.out.println("Invalid input");
@@ -200,7 +331,7 @@ public class BookApp {
      */
     public void quit(){
         try{
-            if(connection == null){
+            if(connection != null){
                 connection.close();
             }
         }catch(SQLException ex){
@@ -220,7 +351,10 @@ public class BookApp {
             System.out.println("Welcome to Frederic's Book database");
             System.out.println("Please choose an option:");
             System.out.println("1. Initialize Database (First Time startup)");
-            System.out.println("2. Create Author");
+            System.out.println("2. Manage Authors");
+            System.out.println("3. Manage Publishers");
+            System.out.println("4. Manage Author ISBN");
+            System.out.println("5. Manage Titles");
             System.out.println("7. Manual Queries (Type your own SQL Statements)");
             System.out.println("8. Drop Database");
             System.out.println("9. Settings");
@@ -236,10 +370,13 @@ public class BookApp {
                     app.quit();
                     break;
                 case 1:
-                    app.initializeDB();
+                    app.initializeDB(in);
                     break;
                 case 2:
-                    app.createAuthor();
+                    app.manageAuthor(in);
+                    break;
+                case 3:
+                    app.managePublisher(in);
                     break;
                 case 8:
                     app.removeDB();
