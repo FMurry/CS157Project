@@ -32,6 +32,10 @@ public class BookApp {
         connection = null;
     }
     
+    /**
+     * Creates the database, please look at importing mysql database in documentation rather than initializing it here
+     * @param input the input scanner
+     */
     public void initializeDB(Scanner input){
         
         try{
@@ -91,7 +95,6 @@ public class BookApp {
                 c.executeUpdate(createPublishersTable);
                 c.execute(createTitlesTable);
                 c.executeUpdate(createAuthorISBNTable);
-                seedDatabase();
             }
             else{
                 System.out.println("Database Creation Failed\n\n\n");
@@ -106,7 +109,7 @@ public class BookApp {
     }
     
     /**
-     * Drops the database
+     * Drops the database you will need to reinitialize
      */
     public void removeDB(){
         try{
@@ -133,12 +136,6 @@ public class BookApp {
         }
     }
     
-    /**
-     * Populates the Database
-     */
-    public void seedDatabase() {
-        
-    }
     
     /**
      * Allows user to view, and update author table
@@ -417,6 +414,10 @@ public class BookApp {
         }
     }
     
+    /**
+     * Allows user to look at ISBN Table, You can only insert into this table when you insert a title
+     * @param input the input scanner
+     */
     public void manageISBN(Scanner input){
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -426,6 +427,7 @@ public class BookApp {
             System.out.println("2.Main Menu");
             int choice = Integer.parseInt(input.nextLine());
             switch (choice) {
+                //SELECT Query for authorISBN
                 case 1:
                     String selectQuery = "SELECT * FROM authorISBN;";
                     Statement stmt = connection.createStatement();
@@ -468,6 +470,10 @@ public class BookApp {
         }
     }
     
+    /**
+     * Allows users to view, add and update titles. When user inserts a title a isbn is inserted into authorISBN
+     * @param input the scanner input
+     */
     public void manageTitle(Scanner input){
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -479,6 +485,7 @@ public class BookApp {
             System.out.println("4.Main Menu");
             int choice = Integer.parseInt(input.nextLine()); 
             switch (choice) {
+                //SELECT Query
                 case 1:
                     String selectQuery = "SELECT * FROM  titles, authorISBN, authors, publishers WHERE titles.publisherID = publishers.publisherID AND titles.isbn = authorISBN.isbn AND authorISBN.authorID = authors.authorID;";
                     Statement stmt = connection.createStatement();
@@ -562,6 +569,7 @@ public class BookApp {
                         }
                     }
                     //END Author
+                    //Now Take in user input
                     System.out.println("Enter ISBN of Book");
                     String isbn = input.nextLine();
                     isbn = isbn.replace("'", "");
@@ -785,6 +793,7 @@ public class BookApp {
         System.out.println("Goodbye!");
     }
     /**
+     * Main method
      * @param args the command line arguments
      */
     public static void main(String[] args) {
