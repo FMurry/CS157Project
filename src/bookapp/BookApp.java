@@ -219,7 +219,7 @@ public class BookApp {
                     authorstmt.executeUpdate(updateQuery);
                     System.out.println("Author Updated\n");
                     break;
-                    case 4:
+                case 4:
                     String authorQuery2 = "SELECT * FROM authors";
                     Statement authorstmt2 = connection.createStatement();
                     ResultSet authors2 = authorstmt2.executeQuery(authorQuery2);
@@ -279,7 +279,8 @@ public class BookApp {
             System.out.println("1. Show Publishers");
             System.out.println("2. Add new Publisher");
             System.out.println("3.Update Publisher");
-            System.out.println("4.Main Menu");
+            System.out.println("4.Delete Publisher");
+            System.out.println("5.Main Menu");
             int choice = Integer.parseInt(input.nextLine());
             
             switch (choice) {
@@ -318,14 +319,67 @@ public class BookApp {
                     }
                     else{
                         this.initializeDB(in);
-                        this.manageAuthor(in);
+                        this.managePublisher(in);
                     }   break;
                 case 3:
-                    //Update Author
+                    //Update publishers
+                    String publisherQuery = "SELECT * FROM publishers";
+                    Statement publisherstmt = connection.createStatement();
+                    ResultSet publishers = publisherstmt.executeQuery(publisherQuery);
+                    if(!publishers.next()){
+                        System.out.println("No Publishers to edit");
+                    }
+                    else{
+                        publishers.beforeFirst();
+                        System.out.println("------------------------------");
+                        while(publishers.next()){
+                            int id = publishers.getInt("publisherID");
+                            String pubName = publishers.getString("publisherName");
+                            System.out.print("ID: "+id+"\t");
+                            System.out.println("Name: "+pubName+"\t");
+                        }
+                    }
+                    System.out.println("--------------------------");
+                    System.out.println("\nChoose an Publisher to edit (Type the integer next to them");
+                    int publisherid = Integer.parseInt(in.nextLine());
+                    System.out.println("Enter Publishers's new Name");
+                    String newName = in.nextLine();
+                    String updateQuery = "UPDATE publishers SET publisherName = "
+                            + "'"+newName+"'"
+                            +" WHERE publisherID = "+publisherid+";";
+                    publisherstmt.executeUpdate(updateQuery);
+                    System.out.println("Publisher Updated\n");
                     
                     break;
+                case 4:
+                    String publisherQuery2 = "SELECT * FROM publishers";
+                    Statement publisherstmt2 = connection.createStatement();
+                    ResultSet publishers2 = publisherstmt2.executeQuery(publisherQuery2);
+                    if(!publishers2.next()){
+                        System.out.println("No Publishers to edit");
+                    }
+                    else{
+                        publishers2.beforeFirst();
+                        System.out.println("-----------------------");
+                        while(publishers2.next()){
+                            int id = publishers2.getInt("publisherID");
+                            String name1 = publishers2.getString("publisherName");
+                            System.out.print("ID: "+id+"\t");
+                            System.out.println("Name: "+name1+"\t");
+                        }
+                        System.out.println("-----------------------");
+                    }
+                    System.out.println("\nChoose an publisher to Delete (Type the integer next to them");
+                    int publisherid2 = Integer.parseInt(in.nextLine());
+                    String deleteQuery = "DELETE FROM publishers WHERE publisherID = "+publisherid2;
+                    publisherstmt2.executeUpdate(deleteQuery);
+                    System.out.println("Publisher Deleted\n");
+                    break;
+                case 5:
             //Do Nothing and Exit
+                    break;
                 default:
+                    
                     break;
             }
             
@@ -333,7 +387,7 @@ public class BookApp {
             if(ex.getMessage().equals("Unknown database 'booksdb'")){
                 System.out.println("Database Does not exist, Initializng it now.......");
                 this.initializeDB(input);
-                this.manageAuthor(input);
+                this.managePublisher(input);
             }
             else{
                 System.err.println(ex.getMessage());
