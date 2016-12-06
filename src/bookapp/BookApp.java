@@ -17,17 +17,22 @@ import javax.sound.midi.SysexMessage;
  */
 public class BookApp {
 
-    private String userName = "root";
-    private String password = "";
-    private Connection connection = null;
-    
+    private String userName;
+    private String password;
+    private Connection connection;
     private String databaseName = "booksdb";
-    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+    
     private static final String DB_URL = "jdbc:mysql://localhost";
     private static final String CREATE_DATABASE = "CREATE DATABASE IF NOT EXISTS ";
     private static final String DATABASE_EXISTS = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ";
     private static final String DROP_DATABASE = "DROP DATABASE booksdb";
     
+    public BookApp(){
+        databaseName = "booksdb";
+        userName = "root";
+        password = "";
+        connection = null;
+    }
     
     public void initializeDB(Scanner input){
         
@@ -302,6 +307,7 @@ public class BookApp {
                     }
                     else{
                         rs.beforeFirst();
+                        System.out.println("--------------------");
                         while(rs.next()){
                         
                             int id = rs.getInt("publisherID");
@@ -310,11 +316,14 @@ public class BookApp {
                             System.out.println("Name: "+name);
                         }
                     }
+                    System.out.println("--------------------");
                     System.out.println("\n");
                     break;
                 case 2:
                     System.out.println("Enter Name of Publisher");
                     String name = in.nextLine();
+                    name = name.replace("'", "");
+                    name = name.replace(",", "");
                     Statement s = connection.createStatement();
                     boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
                     if(success){
@@ -353,6 +362,7 @@ public class BookApp {
                     int publisherid = Integer.parseInt(in.nextLine());
                     System.out.println("Enter Publishers's new Name");
                     String newName = in.nextLine();
+                    newName = newName.replace("'", "");
                     String updateQuery = "UPDATE publishers SET publisherName = "
                             + "'"+newName+"'"
                             +" WHERE publisherID = "+publisherid+";";
@@ -420,23 +430,23 @@ public class BookApp {
             int choice = Integer.parseInt(input.nextLine());
             switch (choice) {
                 case 1:
-                    String selectQuery = "SELECT authorISBN.authorID, authorISBN.isbn, authors.firstName, authors.lastName "
-                            + "FROM authorISBN left join authors on (authors.authorID = authorISBN.authorID);";
+                    String selectQuery = "SELECT * FROM authorISBN;";
                     Statement stmt = connection.createStatement();
                     ResultSet rs = stmt.executeQuery(selectQuery);
                     if(!rs.next()){
                         System.out.println("No Results");
                     }
                     else{
+                        System.out.println("--------------------------");
                         rs.beforeFirst();
                         while(rs.next()){
                         
-                            int id = rs.getInt("");
-                            String name = rs.getString("publisherName");
-                            System.out.print("ID: "+id+"\t");
-                            System.out.println("Name: "+name);
+                            int id = rs.getInt("authorID");
+                            String isbn = rs.getString("isbn");
+                            System.out.println("ID: "+id+"\t"+"ISBN: "+isbn);
                         }
                     }
+                    System.out.println("--------------------------");
                     System.out.println("\n");
                     break;
                 case 2:
@@ -496,9 +506,9 @@ public class BookApp {
                             System.out.print("isbn: "+isbn+"   ");
                             System.out.print("Title: "+title+"   ");
                             System.out.print("Edition: "+editionNumber+"   ");
-                            System.out.print("Year: "+year+"\t");
+                            System.out.print("Year: "+year+"   ");
                             System.out.print("publisher: "+publisher+"   ");
-                            System.out.println("price: "+price);
+                            System.out.println("price: $"+price);
                         }
                         System.out.println("----------------------------------------------------------------------");
                     }
@@ -558,15 +568,21 @@ public class BookApp {
                     //END Author
                     System.out.println("Enter ISBN of Book");
                     String isbn = in.nextLine();
+                    isbn = isbn.replace("'", "");
+                    isbn = isbn.replace(",","");
                     System.out.println("Enter the edition number of book (Integer)");
                     int editionNumber = Integer.parseInt(in.nextLine());
                     System.out.println("Enter release year of book");
                     String year = in.nextLine();
+                    year = year.replace("'", "");
+                    year = year.replace(",", "");
                     
                     System.out.println("Enter price of title ($$.$$)");
                     double price = Double.parseDouble(in.nextLine());
                     System.out.println("Enter the title name of book");
                     String title = input.nextLine();
+                    title = title.replace("'", "");
+                    title = title.replace(",", "");
                     Statement s = connection.createStatement();
                     boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
                     if(success){
@@ -693,6 +709,7 @@ public class BookApp {
                 userChoice = Integer.parseInt(in.nextLine());
             }catch(NumberFormatException ex){
                 userChoice = 0;
+                System.err.println(ex.getMessage());
             }
             switch(userChoice){
                 case -1:
@@ -720,6 +737,7 @@ public class BookApp {
                     app.Settings(in);
                     break;
                 default:
+                    System.out.println("Not a valid Option......");
                     userChoice = 0;
                     break;
             }
