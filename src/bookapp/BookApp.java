@@ -39,7 +39,7 @@ public class BookApp {
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             if(connection == null){
-                connection = DriverManager.getConnection(DB_URL, userName, password);
+                connection = DriverManager.getConnection(DB_URL+"jdbc:mysql://localhost:3306?autoReconnect=true&useSSL=false", userName, password);
             }            
             System.out.println("Please enter database username (default root)");
             userName = in.nextLine();
@@ -53,7 +53,7 @@ public class BookApp {
             s.executeUpdate(CREATE_DATABASE+databaseName);
             boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
             if(success){
-                connection = DriverManager.getConnection(DB_URL+"/booksdb", userName, password);
+                connection = DriverManager.getConnection(DB_URL+"/booksdb"+"?autoReconnect=true&useSSL=false", userName, password);
                 System.out.println("Database Created\n\n\n");
                 Statement c = connection.createStatement();
                 String createAuthorTable = "CREATE TABLE authors( "+
@@ -115,7 +115,7 @@ public class BookApp {
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             if(connection == null){
-                connection = DriverManager.getConnection(DB_URL, userName, password);
+                connection = DriverManager.getConnection(DB_URL+"?autoReconnect=true&useSSL=false", userName, password);
             }
             System.out.println("Please enter database username (default root)");
             userName = in.nextLine();
@@ -148,7 +148,7 @@ public class BookApp {
         try{
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
+            connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Author:\nPlease choose an option");
             System.out.println("1. Show Authors");
             System.out.println("2. Add new author");
@@ -286,7 +286,7 @@ public class BookApp {
         try{
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
+            connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Publishers:\nPlease choose an option");
             System.out.println("1. Show Publishers");
             System.out.println("2. Add new Publisher");
@@ -421,7 +421,7 @@ public class BookApp {
         try{
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
+            connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage ISBN:\nPlease choose an option");
             System.out.println("1. Show ISBN");
             System.out.println("2.Main Menu");
@@ -473,7 +473,7 @@ public class BookApp {
         try{
             Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
+            connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Titles:\nPlease choose an option");
             System.out.println("1. Show Titles");
             System.out.println("2. Add new Title");
