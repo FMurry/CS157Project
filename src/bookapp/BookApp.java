@@ -3,6 +3,7 @@
  */
 package bookapp;
 
+import com.sun.istack.internal.Nullable;
 import java.sql.*;
 import java.util.Scanner;
 import javax.sound.midi.SysexMessage;
@@ -71,13 +72,15 @@ public class BookApp {
                     + "publisherID int NOT NULL , "
                     + "price Decimal(8,2) NOT NULL , "
                     + "title VARCHAR(500) NOT NULL , "
-                    + "FOREIGN KEY (publisherID) REFERENCES publishers(publisherID) ON DELETE CASCADE , "
+                    + "FOREIGN KEY (publisherID) REFERENCES publishers(publisherID) ON DELETE CASCADE "
+                    + "ON UPDATE CASCADE, "
                     + "PRIMARY KEY (isbn) "
                     + ");";
                 String createAuthorISBNTable = "CREATE TABLE authorISBN( "
                     + "authorID int NOT NULL , "
                     + "isbn CHAR(10) NOT NULL , "
-                    + "FOREIGN KEY (authorID) REFERENCES authors(authorID) ON DELETE CASCADE ,"
+                    + "FOREIGN KEY (authorID) REFERENCES authors(authorID) ON DELETE CASCADE "
+                    + "ON UPDATE CASCADE, "
                     + "FOREIGN KEY (isbn) REFERENCES titles(isbn) ON DELETE CASCADE"
                     + ");";
             
@@ -85,14 +88,17 @@ public class BookApp {
                 c.executeUpdate(createPublishersTable);
                 c.execute(createTitlesTable);
                 c.executeUpdate(createAuthorISBNTable);
+                seedDatabase();
             }
             else{
                 System.out.println("Database Creation Failed\n\n\n");
+                
             }
             
             
         } catch (SQLException | ClassNotFoundException ex) {
             System.err.println(ex.getMessage());
+             this.removeDB();
         }
     }
     
@@ -124,6 +130,9 @@ public class BookApp {
         }
     }
     
+    /**
+     * Populates the Database
+     */
     public void seedDatabase() {
         
     }
@@ -407,9 +416,7 @@ public class BookApp {
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName, userName, password);
             System.out.println("Manage ISBN:\nPlease choose an option");
             System.out.println("1. Show ISBN");
-            System.out.println("2. Add new ISBN");
-            System.out.println("3.Update ISBN");
-            System.out.println("4.Main Menu");
+            System.out.println("2.Main Menu");
             int choice = Integer.parseInt(input.nextLine());
             switch (choice) {
                 case 1:
@@ -433,28 +440,9 @@ public class BookApp {
                     System.out.println("\n");
                     break;
                 case 2:
-                    System.out.println("Enter Name of Publisher");
-                    String name = in.nextLine();
-                    Statement s = connection.createStatement();
-                    boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
-                    if(success){
-                        String insertQuery = "INSERT INTO publishers (publisherName) "
-                                + "VALUES ('"
-                                + name
-                                + "'); ";
-                        System.out.println(insertQuery);
-                        s.executeUpdate(insertQuery);
-                        System.out.println("Entry Created\n\n\n");
-                    }
-                    else{
-                        this.initializeDB(in);
-                        this.manageAuthor(in);
-                    }   break;
-                case 3:
-                    //Update Author
                     
                     break;
-            //Do Nothing and Exit
+                
                 default:
                     break;
             }
@@ -486,7 +474,7 @@ public class BookApp {
             int choice = Integer.parseInt(input.nextLine()); 
             switch (choice) {
                 case 1:
-                    String selectQuery = "SELECT * FROM Titles";
+                    String selectQuery = "SELECT * FROM  titles, authorISBN, authors, publishers WHERE titles.publisherID = publishers.publisherID AND titles.isbn = authorISBN.isbn AND authorISBN.authorID = authors.authorID;";
                     Statement stmt = connection.createStatement();
                     ResultSet rs = stmt.executeQuery(selectQuery);
                     if(!rs.next()){
@@ -494,29 +482,35 @@ public class BookApp {
                     }
                     else{
                         rs.beforeFirst();
+                        System.out.println("----------------------------------------------------------------------");
                         while(rs.next()){
                             String isbn = rs.getString("isbn");
                             int editionNumber = rs.getInt("editionNumber");
                             String title = rs.getString("title");
                             String year = rs.getString("year");
-                            int publisherID = rs.getInt("publisherID");
+                            String publisher = rs.getString("publisherName");
+                            String author = rs.getString("firstName")+" "+rs.getString("lastName");
                             double price = rs.getDouble("price");
                         
+                            System.out.print("Author: "+author+"   ");
                             System.out.print("isbn: "+isbn+"   ");
                             System.out.print("Title: "+title+"   ");
                             System.out.print("Edition: "+editionNumber+"   ");
                             System.out.print("Year: "+year+"\t");
-                            System.out.print("publisher: "+publisherID+"   ");
+                            System.out.print("publisher: "+publisher+"   ");
                             System.out.println("price: "+price);
                         }
+                        System.out.println("----------------------------------------------------------------------");
                     }
                     System.out.println("\n");
                     break;
                 case 2:
+                    //Add new book title
                     //SHOW PUBLISHERS HERE
                     Statement publisherSelect = connection.createStatement();
                     String publisherQuery = "SELECT * FROM Publishers";
                     ResultSet publishers = publisherSelect.executeQuery(publisherQuery);
+                    int publisherID;
                     if(!publishers.next()){
                         System.out.println("No publishers in database");
                         System.out.println("Must add a publisher before adding title");
@@ -530,12 +524,38 @@ public class BookApp {
                         }
                         System.out.println("-1. If Publisher Not Found");
                         System.out.println("-------------------");
-                        int id = Integer.parseInt(in.nextLine());
-                        if(id == -1){
+                        System.out.println("Choose the integer that corresponds to the publisher");
+                        publisherID = Integer.parseInt(in.nextLine());
+                        if(publisherID == -1){
                             break;
                         }
                     }
-                    //END
+                    //END Publisher
+                    //SHOW Authors HERE
+                    Statement authorSelect = connection.createStatement();
+                    String authorQuery = "SELECT * FROM authors";
+                    ResultSet authors = authorSelect.executeQuery(authorQuery);
+                    int authorID;
+                    if(!authors.next()){
+                        System.out.println("No Authors in database");
+                        System.out.println("Must add an Author before adding title");
+                        break;
+                    }
+                    else{
+                        authors.beforeFirst();
+                        System.out.println("-------------------");
+                        while(authors.next()){
+                            System.out.println(authors.getInt("authorID")+"\t"+authors.getString("firstName")+" "+authors.getString("lastName"));
+                        }
+                        System.out.println("-1. If Author Not Found");
+                        System.out.println("-------------------");
+                        System.out.println("Choose the integer that corresponds to the Author");
+                        authorID = Integer.parseInt(in.nextLine());
+                        if(publisherID == -1){
+                            break;
+                        }
+                    }
+                    //END Author
                     System.out.println("Enter ISBN of Book");
                     String isbn = in.nextLine();
                     System.out.println("Enter the edition number of book (Integer)");
@@ -544,6 +564,9 @@ public class BookApp {
                     String year = in.nextLine();
                     
                     System.out.println("Enter price of title ($$.$$)");
+                    double price = Double.parseDouble(in.nextLine());
+                    System.out.println("Enter the title name of book");
+                    String title = input.nextLine();
                     Statement s = connection.createStatement();
                     boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
                     if(success){
@@ -551,14 +574,27 @@ public class BookApp {
                                 + " price, title) "
                                 + "VALUES ('"
                                 + isbn
-                                +", "
+                                +"', "
                                 +editionNumber
-                                +", "
+                                +", '"
                                 +year
-                                
+                                +"', "
+                                +publisherID
+                                +", "
+                                +price
+                                +", '"
+                                +title
                                 + "'); ";
-                        System.out.println(insertQuery);
+                        String isbnInsertQuery = "INSERT INTO authorISBN (authorID, isbn)"
+                                + " VALUES ("
+                                + authorID
+                                + ", '"
+                                + isbn
+                                + "'); ";
+                        //System.out.println(insertQuery);
                         s.executeUpdate(insertQuery);
+                        s.executeUpdate(isbnInsertQuery);
+                        //Now Insert into AUthor ISBN TABLE
                         System.out.println("Entry Created\n\n\n");
                     }
                     else{
