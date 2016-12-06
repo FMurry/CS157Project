@@ -146,7 +146,6 @@ public class BookApp {
      */
     public void manageAuthor(Scanner input){
         try{
-            Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Author:\nPlease choose an option");
@@ -180,9 +179,9 @@ public class BookApp {
                     break;
                 case 2:
                     System.out.println("Enter Author's First Name");
-                    String firstName = in.nextLine();
+                    String firstName = input.nextLine();
                     System.out.println("Enter author's Last Name");
-                    String lastName = in.nextLine();
+                    String lastName = input.nextLine();
                     Statement s = connection.createStatement();
                     boolean success = s.execute(DATABASE_EXISTS+"'"+databaseName+"'");
                     if(success){
@@ -197,8 +196,8 @@ public class BookApp {
                         System.out.println("Entry Created\n\n\n");
                     }
                     else{
-                        this.initializeDB(in);
-                        this.manageAuthor(in);
+                        this.initializeDB(input);
+                        this.manageAuthor(input);
                     }   
                     break;
                 case 3:
@@ -220,11 +219,11 @@ public class BookApp {
                         }
                     }
                     System.out.println("\nChoose an author to edit (Type the integer next to them");
-                    int authorid = Integer.parseInt(in.nextLine());
+                    int authorid = Integer.parseInt(input.nextLine());
                     System.out.println("Enter Author's new First Name");
-                    String newFName = in.nextLine();
+                    String newFName = input.nextLine();
                     System.out.println("Enter Author's new Last Name");
-                    String newLName = in.nextLine();
+                    String newLName = input.nextLine();
                     String updateQuery = "UPDATE authors SET firstName = "
                             + "'"+newFName+"', lastName = "
                             + "'"+newLName+"' WHERE authorID = "+authorid+";";
@@ -250,7 +249,7 @@ public class BookApp {
                         }
                     }
                     System.out.println("\nChoose an author to Delete (Type the integer next to them");
-                    int authorid2 = Integer.parseInt(in.nextLine());
+                    int authorid2 = Integer.parseInt(input.nextLine());
                     String deleteQuery = "DELETE FROM authors WHERE authorID = "+authorid2;
                     authorstmt2.executeUpdate(deleteQuery);
                     System.out.println("Author Deleted\n");
@@ -284,7 +283,6 @@ public class BookApp {
      */
     public void managePublisher(Scanner input){
         try{
-            Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Publishers:\nPlease choose an option");
@@ -319,7 +317,7 @@ public class BookApp {
                     break;
                 case 2:
                     System.out.println("Enter Name of Publisher");
-                    String name = in.nextLine();
+                    String name = input.nextLine();
                     name = name.replace("'", "");
                     name = name.replace(",", "");
                     Statement s = connection.createStatement();
@@ -334,8 +332,8 @@ public class BookApp {
                         System.out.println("Entry Created\n\n\n");
                     }
                     else{
-                        this.initializeDB(in);
-                        this.managePublisher(in);
+                        this.initializeDB(input);
+                        this.managePublisher(input);
                     }   break;
                 case 3:
                     //Update publishers
@@ -357,9 +355,9 @@ public class BookApp {
                     }
                     System.out.println("--------------------------");
                     System.out.println("\nChoose an Publisher to edit (Type the integer next to them");
-                    int publisherid = Integer.parseInt(in.nextLine());
+                    int publisherid = Integer.parseInt(input.nextLine());
                     System.out.println("Enter Publishers's new Name");
-                    String newName = in.nextLine();
+                    String newName = input.nextLine();
                     newName = newName.replace("'", "");
                     String updateQuery = "UPDATE publishers SET publisherName = "
                             + "'"+newName+"'"
@@ -387,7 +385,7 @@ public class BookApp {
                         System.out.println("-----------------------");
                     }
                     System.out.println("\nChoose an publisher to Delete (Type the integer next to them");
-                    int publisherid2 = Integer.parseInt(in.nextLine());
+                    int publisherid2 = Integer.parseInt(input.nextLine());
                     String deleteQuery = "DELETE FROM publishers WHERE publisherID = "+publisherid2;
                     publisherstmt2.executeUpdate(deleteQuery);
                     System.out.println("Publisher Deleted\n");
@@ -419,7 +417,6 @@ public class BookApp {
     
     public void manageISBN(Scanner input){
         try{
-            Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage ISBN:\nPlease choose an option");
@@ -471,7 +468,6 @@ public class BookApp {
     
     public void manageTitle(Scanner input){
         try{
-            Scanner in = new Scanner(System.in);
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(DB_URL+"/"+databaseName+"?autoReconnect=true&useSSL=false", userName, password);
             System.out.println("Manage Titles:\nPlease choose an option");
@@ -533,7 +529,7 @@ public class BookApp {
                         System.out.println("-1. If Publisher Not Found");
                         System.out.println("-------------------");
                         System.out.println("Choose the integer that corresponds to the publisher");
-                        publisherID = Integer.parseInt(in.nextLine());
+                        publisherID = Integer.parseInt(input.nextLine());
                         if(publisherID == -1){
                             break;
                         }
@@ -558,25 +554,25 @@ public class BookApp {
                         System.out.println("-1. If Author Not Found");
                         System.out.println("-------------------");
                         System.out.println("Choose the integer that corresponds to the Author");
-                        authorID = Integer.parseInt(in.nextLine());
+                        authorID = Integer.parseInt(input.nextLine());
                         if(publisherID == -1){
                             break;
                         }
                     }
                     //END Author
                     System.out.println("Enter ISBN of Book");
-                    String isbn = in.nextLine();
+                    String isbn = input.nextLine();
                     isbn = isbn.replace("'", "");
                     isbn = isbn.replace(",","");
                     System.out.println("Enter the edition number of book (Integer)");
-                    int editionNumber = Integer.parseInt(in.nextLine());
+                    int editionNumber = Integer.parseInt(input.nextLine());
                     System.out.println("Enter release year of book");
-                    String year = in.nextLine();
+                    String year = input.nextLine();
                     year = year.replace("'", "");
                     year = year.replace(",", "");
                     
                     System.out.println("Enter price of title ($$.$$)");
-                    double price = Double.parseDouble(in.nextLine());
+                    double price = Double.parseDouble(input.nextLine());
                     System.out.println("Enter the title name of book");
                     String title = input.nextLine();
                     title = title.replace("'", "");
@@ -612,11 +608,114 @@ public class BookApp {
                         System.out.println("Entry Created\n\n\n");
                     }
                     else{
-                        this.initializeDB(in);
-                        this.manageAuthor(in);
+                        this.initializeDB(input);
+                        this.manageAuthor(input);
                     }   break;
                 case 3:
                     //Update Title
+                    String selectQuery2 = "SELECT * FROM  titles, authorISBN, authors, publishers WHERE titles.publisherID = publishers.publisherID AND titles.isbn = authorISBN.isbn AND authorISBN.authorID = authors.authorID;";
+                    Statement stmt2 = connection.createStatement();
+                    ResultSet rs2 = stmt2.executeQuery(selectQuery2);
+                    if(!rs2.next()){
+                        System.out.println("No Results");
+                    }
+                    else{
+                        int i = 1;
+                        rs2.beforeFirst();
+                        System.out.println("----------------------------------------------------------------------");
+                        while(rs2.next()){
+                            
+                            String isbn2 = rs2.getString("isbn");
+                            int editionNumber2 = rs2.getInt("editionNumber");
+                            String title2 = rs2.getString("title");
+                            String year2 = rs2.getString("year");
+                            String publisher2 = rs2.getString("publisherName");
+                            String author2 = rs2.getString("firstName")+" "+rs2.getString("lastName");
+                            double price2 = rs2.getDouble("price");
+                            System.out.print(i+". ");
+                            System.out.print("Author: "+author2+"   ");
+                            System.out.print("isbn: "+isbn2+"   ");
+                            System.out.print("Title: "+title2+"   ");
+                            System.out.print("Edition: "+editionNumber2+"   ");
+                            System.out.print("Year: "+year2+"   ");
+                            System.out.print("publisher: "+publisher2+"   ");
+                            System.out.println("price: $"+price2);
+                            i++;
+                        }
+                        System.out.println("----------------------------------------------------------------------");
+                        System.out.println("Enter the integer that corresponds to the title you want to change");
+                        int titleChoice = Integer.parseInt(input.nextLine());
+                        rs2.beforeFirst();
+                        for(int j = 1; j<i;j++){
+                            rs2.next();
+                        }
+                        String currentTitle = rs2.getString("title");
+                        System.out.println("Enter new Title");
+                        String newTitle = input.nextLine();
+                        newTitle = newTitle.replace("'", "");
+                        newTitle = newTitle.replace(",", "");
+                        newTitle = newTitle.replace("\"", "");
+                        System.out.println("Enter new edition");
+                        int newEdition = Integer.parseInt(input.nextLine());
+                        System.out.println("Enter new Year");
+                        String newYear = input.nextLine();
+                        newYear = newYear.replace("'", "");
+                        newYear = newYear.replace(",", "");
+                        newYear = newYear.replace("\"", "");
+                        System.out.println("Enter new price ($$.$$)");
+                        double newPrice = Double.parseDouble(input.nextLine());
+                        System.out.println("Enter new ISBN");
+                        String newISBN = input.nextLine();
+                        newISBN = newISBN.replace("'", "");
+                        newISBN = newISBN.replace("\"", "");
+                        newISBN = newISBN.replace(",", "");
+                        //SHOW PUBLISHERS HERE
+                    Statement publisherSelect2 = connection.createStatement();
+                    String publisherQuery2 = "SELECT * FROM Publishers";
+                    ResultSet publishers2 = publisherSelect2.executeQuery(publisherQuery2);
+                    int publisherID2;
+                    if(!publishers2.next()){
+                        System.out.println("No publishers in database");
+                        System.out.println("Must add a publisher before adding title");
+                        break;
+                    }
+                    else{
+                        publishers2.beforeFirst();
+                        System.out.println("-------------------");
+                        while(publishers2.next()){
+                            System.out.println(publishers2.getInt("publisherID")+"\t"+publishers2.getString("publisherName"));
+                        }
+                        System.out.println("-1. If Publisher Not Found");
+                        System.out.println("-------------------");
+                        System.out.println("Choose the integer that corresponds to the publisher");
+                        publisherID2 = Integer.parseInt(input.nextLine());
+                        if(publisherID2 == -1){
+                            break;
+                        }
+                    }
+                    //END Publisher
+                    String updateTitleQuery = "UPDATE titles SET isbn = '"
+                            + newISBN
+                            +"', editionNumber = "
+                            + newEdition
+                            +", Year = '"
+                            + newYear
+                            +"', publisherID = "
+                            +publisherID2
+                            +", price = "
+                            +newPrice
+                            +", title = '"
+                            + newTitle
+                            +"' WHERE title = '"
+                            + currentTitle
+                            +"';";
+                    stmt2.executeUpdate(updateTitleQuery);
+                        
+                        
+                    }
+                    System.out.println("\n");
+                    break;
+                case 4:
                     
                     break;
             //Do Nothing and Exit
