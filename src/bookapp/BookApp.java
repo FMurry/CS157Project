@@ -194,6 +194,7 @@ public class BookApp {
                         System.out.println(insertQuery);
                         s.executeUpdate(insertQuery);
                         System.out.println("Entry Created\n\n\n");
+                        System.out.println(insertQuery);
                     }
                     else{
                         this.initializeDB(input);
@@ -228,6 +229,7 @@ public class BookApp {
                             + "'"+newFName+"', lastName = "
                             + "'"+newLName+"' WHERE authorID = "+authorid+";";
                     authorstmt.executeUpdate(updateQuery);
+                    System.out.println(updateQuery);
                     System.out.println("Author Updated\n");
                     break;
                 case 4:
