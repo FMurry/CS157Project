@@ -20,7 +20,7 @@ public class BookApp {
     private Connection connection;
     private String databaseName = "booksdb";
     
-    private static final String DB_URL = "jdbc:mysql://localhost";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306";
     private static final String CREATE_DATABASE = "CREATE DATABASE IF NOT EXISTS ";
     private static final String DATABASE_EXISTS = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ";
     private static final String DROP_DATABASE = "DROP DATABASE booksdb";
